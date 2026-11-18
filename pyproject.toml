@@ -1,0 +1,22 @@
+[project]
+name = "django-workspace"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "shaiekmohamedkarim", email = "shaiek.mohamedkarim@esprit.tn" }
+]
+requires-python = ">=3.14"
+dependencies = []
+
+[project.scripts]
+django = "django:main"
+
+[build-system]
+requires = ["uv_build>=0.13.7,<0.14.0"]
+build-backend = "uv_build"
+
+[tool.uv.workspace]
+members = [
+    "myproject_3A26",
+]
