@@ -1,10 +1,53 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
-# Create your models here.
+from django.core.validators import MinLengthValidator, RegexValidator
+from django.db import models
+from django.utils import timezone
+from django.core.exceptions import ValidationError
+
+
+def validate_past_date(value):
+    if value >= timezone.localdate():
+        raise ValidationError("La date de naissance doit être antérieure à aujourd'hui.")
+
+
 class User(AbstractUser):
     pass
+
+
+class Specialty(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Doctor(User):
-    pass
+    license_number = models.CharField(
+        max_length=6,
+        unique=True,
+        validators=[MinLengthValidator(6)],
+    )
+    phone = models.CharField(
+        max_length=8,
+        validators=[RegexValidator(r"^\d{8}$", "Le téléphone doit contenir exactement 8 chiffres.")],
+    )
+    specialties = models.ManyToManyField(Specialty, related_name="doctors", blank=True)
+
+    def __str__(self):
+        return f"Dr {self.get_full_name()}"
+
+
 class Patient(User):
-    pass
-            
+    national_id = models.CharField(
+        max_length=8,
+        unique=True,
+        validators=[RegexValidator(r"^\d{8}$", "La CIN doit contenir exactement 8 chiffres.")],
+    )
+    phone = models.CharField(
+        max_length=8,
+        validators=[RegexValidator(r"^\d{8}$", "Le téléphone doit contenir exactement 8 chiffres.")],
+    )
+    birth_date = models.DateField(validators=[validate_past_date])
+
+    def __str__(self):
+        return self.get_full_name()
