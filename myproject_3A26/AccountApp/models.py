@@ -20,7 +20,9 @@ class Specialty(models.Model):
     def __str__(self):
         return self.name
 
-
+    class Meta:
+        verbose_name = "Spécialité"
+        verbose_name_plural = "Spécialités"
 class Doctor(User):
     license_number = models.CharField(
         max_length=6,
@@ -35,6 +37,10 @@ class Doctor(User):
 
     def __str__(self):
         return f"Dr {self.get_full_name()}"
+
+    class Meta:
+        verbose_name = "Médecin"
+        verbose_name_plural = "Médecins"
 
 
 class Patient(User):
@@ -51,3 +57,7 @@ class Patient(User):
 
     def __str__(self):
         return self.get_full_name()
+
+    class Meta:
+        verbose_name = "Patient"
+        verbose_name_plural = "Patients"

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from AppointmentApp.admin import AppointmentInline
+from AppointmentApp.admin import AppointmentStacked
 
 from .models import Doctor, Patient, Specialty, User
 
@@ -31,6 +31,7 @@ class DoctorAdmin(admin.ModelAdmin):
     search_fields = ("license_number", "last_name", "first_name")
     ordering = ("last_name",)
     filter_horizontal = ("specialties",)
+    inlines = [AppointmentStacked]
 
     def get_readonly_fields(self, request, obj=None):
         return ("license_number",) if obj else ()
@@ -45,7 +46,7 @@ class PatientAdmin(admin.ModelAdmin):
     list_display = ("last_name", "first_name", "national_id", "phone", "birth_date")
     search_fields = ("last_name", "first_name", "national_id")
     ordering = ("last_name",)
-    inlines = [AppointmentInline]
+    inlines = [AppointmentStacked]
 
     def get_readonly_fields(self, request, obj=None):
         return ("national_id",) if obj else ()

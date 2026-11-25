@@ -6,12 +6,13 @@ from django.utils import timezone
 from .models import Appointment
 
 
-class AppointmentInline(admin.StackedInline):
+class AppointmentStacked(admin.StackedInline):
     model = Appointment
-    extra = 0
+    extra = 1
     fields = (
         "appointment_date",
         "doctor",
+        "patient",
         "duration_minutes",
         "status",
         "reason",
@@ -66,6 +67,7 @@ def cancel_appointments(modeladmin, request, queryset):
 @admin.register(Appointment)
 class AppointmentAdmin(admin.ModelAdmin):
     list_display = ("appointment_date", "doctor", "patient", "duration_minutes", "status")
+    list_editable = ("status",)
     list_filter = ("status", "doctor", DateRangeFilter)
     search_fields = (
         "patient__last_name",
@@ -76,9 +78,9 @@ class AppointmentAdmin(admin.ModelAdmin):
     ordering = ("-appointment_date",)
     readonly_fields = ("created_at", "updated_at")
     fieldsets = (
-        ("Participants", {"fields": ("doctor", "patient")}),
-        ("Planification", {"fields": ("appointment_date", "duration_minutes", "status")}),
-        ("Dossier", {"fields": ("reason", "prescription")}),
-        ("Suivi", {"fields": ("created_at", "updated_at")}),
+        ("Description", {"fields": ("reason", "status", "prescription")}),
+        ("Date + Durée", {"fields": ("appointment_date", "duration_minutes")}),
+        ("Patients / Médecins", {"fields": ("doctor", "patient")}),
+        ("Planification", {"fields": ("created_at", "updated_at")}),
     )
     actions = (confirm_appointments, cancel_appointments)
